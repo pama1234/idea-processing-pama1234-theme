@@ -1,0 +1,108 @@
+plugins {
+  id 'java'
+  id 'eclipse'
+  id 'theme-generator-plugin'
+  id 'org.jetbrains.intellij' version '1.16.0'
+  id 'org.jetbrains.kotlin.jvm' version '1.9.20-RC'
+  id 'org.jlleitschuh.gradle.ktlint' version '11.6.1'
+  id 'org.kordamp.gradle.markdown' version '2.2.0'
+
+  id "com.diffplug.spotless" version "$spotlessPluginVersion"
+}
+
+spotless {
+  lineEndings 'UNIX'
+
+  java {
+    target '**/*.java'
+    removeUnusedImports()
+    eclipse().configFile new File(rootProject.projectDir.absolutePath, 'docs/eclipse.formatter.xml')
+  }
+  groovyGradle {
+    target '*.gradle'
+    greclipse().configFile new File(rootProject.projectDir.absolutePath, 'docs/eclipse.formatter.xml')
+  }
+}
+
+group 'pama1234'
+def projectVersion = System.getenv().getOrDefault('VERSION', '').replace('refs/tags/v', '')
+version projectVersion
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  api 'io.sentry:sentry:7.7.0'
+  api 'commons-io:commons-io:2.16.0'
+}
+
+configurations {
+  implementation.exclude group: 'org.slf4j'
+  api.exclude group: 'org.slf4j'
+}
+
+intellij {
+  version.set('2024.1')
+  type.set('IC')
+  downloadSources.set(true)
+  updateSinceUntilBuild.set(true)
+}
+
+compileKotlin {
+  kotlinOptions.jvmTarget = "17"
+}
+compileTestKotlin {
+  kotlinOptions.jvmTarget = "17"
+}
+
+markdownToHtml {
+  sourceDir = new File("$projectDir/build/markdown")
+  outputDir = new File("$projectDir/build/html")
+
+  tables = false
+}
+
+tasks.runIde {
+  def idePath = project.hasProperty("idePath") ? project.findProperty("idePath") : ""
+  if(!"".equalsIgnoreCase(idePath)) {
+    ideDir.set(file(idePath))
+  }
+}
+
+tasks.runPluginVerifier {
+  ideVersions.set([
+    "IC-2024.1",
+  ])
+}
+
+tasks.patchPluginXml {
+  version.set(projectVersion)
+  sinceBuild.set('241.14494.240')
+  untilBuild.set('251.*')
+
+  def changelogPath = "$projectDir/build/html/CHANGELOG.html"
+  def readmePath = "$projectDir/build/html/README.html"
+
+  if (file(changelogPath).exists()) {
+    changeNotes.set( provider {
+      file(changelogPath).text
+    } )
+  }
+
+  if (file(readmePath).exists()) {
+    pluginDescription.set(provider {
+      file(readmePath).text
+    })
+  }
+}
+
+tasks.markdownToHtml.dependsOn("createReleaseNotes")
+tasks.markdownToHtml.dependsOn("copyReadme")
+tasks.patchReadMeHtml.dependsOn("markdownToHtml")
+tasks.patchPluginXml.dependsOn("patchReadMeHtml")
+tasks.patchPluginXml.dependsOn("createThemes")
+
+publishPlugin {
+  token.set(System.getenv('PUBLISH_TOKEN'))
+}

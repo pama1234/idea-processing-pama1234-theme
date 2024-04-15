@@ -1,0 +1,35 @@
+{
+  "name": "VSCode Pama1234 Light",
+  "dark": false,
+  "author": "Dinesh Srinivasan and Pama1234",
+  "editorScheme": "/themes/pama1234-light.xml",
+  "ui": {
+    "*": {
+
+    },
+
+    "Editor": {
+      "background": "#FFFFFF"
+    },
+
+    "SearchMatch": {
+      "startBackground": "#f5bc2d",
+      "endBackground": "#e9b32b"
+    },
+
+
+    "ToggleButton": {
+      "onBackground": "#1D7BED"
+    },
+    "CompletionPopup": {
+      "matchForeground": "#148be8"
+    },
+
+    "WelcomeScreen": {
+      "background": "#FFFFFF",
+      "SidePanel.background": "#F8F8F8",
+      "Projects.background": "#FFFFFF",
+      "Projects.actions.background": "#225DA1"
+    }
+  }
+}

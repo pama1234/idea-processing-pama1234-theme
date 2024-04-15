@@ -1,0 +1,26 @@
+<idea-plugin>
+  <id>pama1234.processing-pama1234-theme</id>
+  <name>Processing Pama1234 Theme</name>
+  <version>@version@</version>
+  <vendor email="pama1234@163.com"
+          url="https://github.com/pama1234/idea-processing-pama1234-theme">pama1234
+  </vendor>
+  <version>0.0.4</version>
+
+  <depends>com.intellij.modules.platform</depends>
+
+  <!--    Leave this in here so the IDE gives you feedback on-->
+  <!--    What API's are available-->
+  <idea-version since-build="241.14494.240"/>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <backgroundPostStartupActivity implementation="pama1234.Pama1234ThemeManager$Pama1234BackgroundPostStartupActivity"></backgroundPostStartupActivity>
+    <applicationService serviceImplementation="pama1234.settings.ThemeSettings"/>
+    <errorHandler id="1ff5406b-4591-40ed-8e86-54c652984b3f"
+                  implementation="pama1234.integrations.ErrorReporter"/>
+    <notificationGroup displayType="BALLOON" id="Processing Pama1234 Theme" icon="Pama1234Icons.LOGO" isLogByDefault="false" toolWindowId="Processing Pama1234 Theme"  />
+    <postStartupActivity implementation="pama1234.Pama1234Theme"/>
+    <themeProvider id="f17085cd-1e73-4af0-86a0-bd75f0a6f20b" path="/themes/vscode_dark_modern.theme.json"/>
+    <themeProvider id="20aba5a7-93a5-4308-ba9c-d0efc27fc2fa" path="/themes/vscode_light.theme.json"/>
+  </extensions>
+</idea-plugin>
